@@ -141,6 +141,21 @@ static void handleCommand(const char* cmd) {
       break;
     }
 
+    case 'v': {
+      // v<ch>:<value>  e.g. v0:14500.0 — set cal factor directly
+      if (len >= 4 && cmd[2] == ':') {
+        uint8_t ch = cmd[1] - '0';
+        float val = atof(cmd + 3);
+        if (ch < 4 && val != 0.0f) {
+          calFactor[ch] = val;
+          lc[ch].setCalFactor(calFactor[ch]);
+          saveCal(ch);
+          printCal();
+        }
+      }
+      break;
+    }
+
     case 'q': adjustCal(0, +CAL_STEP); break;
     case 'a': adjustCal(0, -CAL_STEP); break;
     case 'w': adjustCal(1, +CAL_STEP); break;

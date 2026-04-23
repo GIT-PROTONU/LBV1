@@ -168,13 +168,32 @@
     .cal-group:nth-child(2) .cal-name { color: var(--lc2); }
     .cal-group:nth-child(3) .cal-name { color: var(--lc3); }
     .cal-group:nth-child(4) .cal-name { color: var(--lc4); }
-    .cal-group button { padding: 5px 10px; font-size: .92rem; line-height: 1; }
+    .cal-arrows { display: flex; flex-direction: column; gap: 2px; }
+    .cal-arrow {
+      padding: 2px 7px; font-size: .6rem; line-height: 1.4;
+      border-radius: 3px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--muted); cursor: pointer;
+      transition: color .1s, border-color .1s;
+    }
+    .cal-arrow:hover:not(:disabled) { color: var(--text); border-color: #5050a0; }
+
+    .step-btns { display: flex; gap: 3px; }
+    .step-btn {
+      padding: 4px 8px; font-size: .72rem; border-radius: 4px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer;
+    }
+    .step-btn.active { border-color: #a080f0; color: #a080f0; background: #1a1030; }
     .cal-readout {
       font-size: .75rem; font-family: 'Consolas', monospace;
       font-variant-numeric: tabular-nums;
       padding: 4px 7px; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 5px; min-width: 68px; text-align: center;
+      border-radius: 5px; width: 80px; text-align: center; color: var(--text);
     }
+    .cal-readout:focus { outline: none; border-color: #a080f0; }
+    /* hide browser number spinners */
+    .cal-readout::-webkit-inner-spin-button,
+    .cal-readout::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .cal-readout[type=number] { -moz-appearance: textfield; }
 
     /* ── Threshold inputs ── */
     .thr-group { display: flex; align-items: center; gap: 5px; }
@@ -326,32 +345,47 @@
     <!-- Calibration -->
     <div class="panel-row">
       <span class="row-label">Cal ±10</span>
+      <div class="step-btns">
+        <button class="step-btn active" data-step="1">1</button>
+        <button class="step-btn" data-step="10">10</button>
+        <button class="step-btn" data-step="100">100</button>
+        <button class="step-btn" data-step="1000">1k</button>
+      </div>
+      <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC1</span>
-        <span class="cal-readout" id="cal-val-0">—</span>
-        <button id="cal-0-up" disabled>+</button>
-        <button id="cal-0-dn" disabled>−</button>
+        <input type="number" class="cal-readout" id="cal-val-0" placeholder="—" step="any">
+        <div class="cal-arrows">
+          <button class="cal-arrow" id="cal-0-up" disabled>▲</button>
+          <button class="cal-arrow" id="cal-0-dn" disabled>▼</button>
+        </div>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC2</span>
-        <span class="cal-readout" id="cal-val-1">—</span>
-        <button id="cal-1-up" disabled>+</button>
-        <button id="cal-1-dn" disabled>−</button>
+        <input type="number" class="cal-readout" id="cal-val-1" placeholder="—" step="any">
+        <div class="cal-arrows">
+          <button class="cal-arrow" id="cal-1-up" disabled>▲</button>
+          <button class="cal-arrow" id="cal-1-dn" disabled>▼</button>
+        </div>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC3</span>
-        <span class="cal-readout" id="cal-val-2">—</span>
-        <button id="cal-2-up" disabled>+</button>
-        <button id="cal-2-dn" disabled>−</button>
+        <input type="number" class="cal-readout" id="cal-val-2" placeholder="—" step="any">
+        <div class="cal-arrows">
+          <button class="cal-arrow" id="cal-2-up" disabled>▲</button>
+          <button class="cal-arrow" id="cal-2-dn" disabled>▼</button>
+        </div>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC4</span>
-        <span class="cal-readout" id="cal-val-3">—</span>
-        <button id="cal-3-up" disabled>+</button>
-        <button id="cal-3-dn" disabled>−</button>
+        <input type="number" class="cal-readout" id="cal-val-3" placeholder="—" step="any">
+        <div class="cal-arrows">
+          <button class="cal-arrow" id="cal-3-up" disabled>▲</button>
+          <button class="cal-arrow" id="cal-3-dn" disabled>▼</button>
+        </div>
       </div>
       <div class="sep"></div>
       <button class="btn-wizard" id="btn-wizard" disabled>Wizard…</button>
@@ -570,7 +604,10 @@ function setValues(values) {
 
 function setCalValues(values) {
   values.forEach((v, i) => {
-    calValEls[i].textContent = Number.isFinite(v) ? v.toFixed(1) : '—';
+    // Don't overwrite while user is actively editing
+    if (document.activeElement !== calValEls[i]) {
+      calValEls[i].value = Number.isFinite(v) ? v.toFixed(1) : '';
+    }
   });
 }
 
@@ -784,9 +821,46 @@ document.getElementById('btn-tare-all').addEventListener('click', () => {
 
 btnDiag.addEventListener('click', () => send('p'));
 
-[['q','a'],['w','s'],['e','d'],['r','f']].forEach(([up,dn], i) => {
-  document.getElementById(`cal-${i}-up`).addEventListener('click', () => send(up));
-  document.getElementById(`cal-${i}-dn`).addEventListener('click', () => send(dn));
+// Step size selector
+let calStep = 1;
+document.querySelectorAll('.step-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    calStep = Number(btn.dataset.step);
+    document.querySelectorAll('.step-btn').forEach(b => b.classList.toggle('active', b === btn));
+  });
+});
+
+// Cal adjust helper — reads current input value, adds delta, sends to firmware
+function nudgeCal(i, delta) {
+  const cur = parseFloat(calValEls[i].value);
+  if (!isFinite(cur)) return;
+  const next = parseFloat((cur + delta).toFixed(4));
+  calValEls[i].value = next;
+  send(`v${i}:${next}`);
+}
+
+// Arrow buttons
+[0,1,2,3].forEach(i => {
+  document.getElementById(`cal-${i}-up`).addEventListener('click', () => nudgeCal(i, +calStep));
+  document.getElementById(`cal-${i}-dn`).addEventListener('click', () => nudgeCal(i, -calStep));
+});
+
+// Scroll wheel on cal inputs
+calValEls.forEach((inp, i) => {
+  inp.addEventListener('wheel', e => {
+    e.preventDefault();
+    nudgeCal(i, e.deltaY < 0 ? +calStep : -calStep);
+  }, { passive: false });
+});
+
+// Direct cal factor entry (type + Enter or blur)
+calValEls.forEach((inp, i) => {
+  function applyCalValue() {
+    const v = parseFloat(inp.value);
+    if (isFinite(v) && v !== 0) send(`v${i}:${v}`);
+  }
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { applyCalValue(); inp.blur(); } });
+  inp.addEventListener('blur', applyCalValue);
 });
 
 // ── Calibration wizard ─────────────────────────────────────────────────────

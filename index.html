@@ -12,44 +12,26 @@
       --border:  #252535;
       --text:    #e0e0f0;
       --muted:   #60608a;
-      --lc1: #ff6384;
-      --lc2: #36a2eb;
-      --lc3: #ffce56;
-      --lc4: #4bc0c0;
-      --green: #4ade80;
-      --red:   #f87171;
-      --amber: #fbbf24;
+      --lc1: #ff6384; --lc2: #36a2eb; --lc3: #ffce56; --lc4: #4bc0c0;
+      --green: #4ade80; --red: #f87171; --amber: #fbbf24;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-size: 14px; min-height: 100vh;
+      display: flex; flex-direction: column;
     }
 
     /* ── Header ── */
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 24px; background: var(--surface);
+      border-bottom: 1px solid var(--border); gap: 12px;
     }
-
     header h1 { font-size: 1rem; font-weight: 600; letter-spacing: .06em; }
-
     .header-right { display: flex; align-items: center; gap: 10px; }
-
     #version-badge { font-size: .75rem; color: var(--muted); }
-
     #hz-badge {
       font-size: .75rem; font-variant-numeric: tabular-nums;
       padding: 3px 9px; border-radius: 4px;
@@ -57,177 +39,198 @@
       min-width: 52px; text-align: center;
     }
     #hz-badge.active { background: #0d2a1a; color: var(--green); }
-
     #mode-badge {
       font-size: .72rem; font-weight: 600; letter-spacing: .08em;
       padding: 3px 9px; border-radius: 4px;
       background: var(--border); color: var(--muted);
-      transition: background .2s, color .2s;
     }
     #mode-badge.diag { background: #2e2010; color: var(--amber); }
-
     #status-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--muted); flex-shrink: 0;
-      transition: background .3s;
+      background: var(--muted); transition: background .3s;
     }
     #status-dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
-
     #connect-btn {
       padding: 6px 16px; border-radius: 6px;
-      border: 1px solid var(--border);
-      background: transparent; color: var(--text);
-      cursor: pointer; font-size: .82rem;
-      transition: border-color .15s, color .15s;
+      border: 1px solid var(--border); background: transparent; color: var(--text);
+      cursor: pointer; font-size: .82rem; transition: border-color .15s, color .15s;
     }
     #connect-btn:hover        { border-color: var(--green); color: var(--green); }
     #connect-btn.connected    { border-color: var(--green); color: var(--green); }
     #connect-btn.connected:hover { border-color: var(--red); color: var(--red); }
 
-    /* ── Main layout ── */
+    /* ── Layout ── */
     main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding: 18px 24px;
-      max-width: 1100px;
-      width: 100%;
-      margin: 0 auto;
+      flex: 1; display: flex; flex-direction: column; gap: 14px;
+      padding: 18px 24px; max-width: 1100px; width: 100%; margin: 0 auto;
     }
 
-    /* ── Value cards ── */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
+    /* ── Cards ── */
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 14px 14px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px 14px 12px;
+      text-align: center; position: relative; overflow: hidden;
+      transition: border-color .2s;
     }
     .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
     }
     .card:nth-child(1)::before { background: var(--lc1); }
     .card:nth-child(2)::before { background: var(--lc2); }
     .card:nth-child(3)::before { background: var(--lc3); }
     .card:nth-child(4)::before { background: var(--lc4); }
-
-    .card-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px; }
-    .card-value { font-size: 2.1rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    .card.overload {
+      border-color: var(--red);
+      background: #1a1016;
+      animation: pulse-border .6s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-border {
+      from { border-color: #f8717180; }
+      to   { border-color: var(--red); }
+    }
+    .card-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 6px; }
+    .card-value { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
     .card:nth-child(1) .card-value { color: var(--lc1); }
     .card:nth-child(2) .card-value { color: var(--lc2); }
     .card:nth-child(3) .card-value { color: var(--lc3); }
     .card:nth-child(4) .card-value { color: var(--lc4); }
-    .card-unit { font-size: .7rem; color: var(--muted); margin-top: 6px; }
+    .card-unit { font-size: .7rem; color: var(--muted); margin-top: 4px; }
+    .card-minmax {
+      display: flex; justify-content: center; gap: 12px;
+      margin-top: 8px; font-size: .7rem; font-variant-numeric: tabular-nums;
+      color: var(--muted); border-top: 1px solid var(--border); padding-top: 6px;
+    }
+    .card-minmax span { display: flex; align-items: center; gap: 3px; }
+    .mm-label { opacity: .6; }
 
     /* ── Chart ── */
     .chart-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      height: 280px;
-      position: relative;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px 10px;
     }
+    .chart-canvas-wrap { height: 260px; position: relative; }
+    .chart-controls {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px; flex-wrap: wrap; gap: 8px;
+    }
+    .ch-toggles { display: flex; gap: 6px; }
+    .ch-toggle {
+      padding: 4px 12px; border-radius: 5px; font-size: .78rem;
+      border: 1px solid var(--border); background: var(--bg); color: var(--muted);
+      cursor: pointer; transition: all .15s;
+    }
+    .ch-toggle.active { color: var(--text); border-color: currentColor; }
+    #ch-0.active { color: var(--lc1); } #ch-1.active { color: var(--lc2); }
+    #ch-2.active { color: var(--lc3); } #ch-3.active { color: var(--lc4); }
 
-    /* ── Controls panel ── */
+    /* ── Panel ── */
     .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 18px;
+      display: flex; flex-direction: column; gap: 12px;
     }
-
     .panel-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     }
-
     .row-label {
       font-size: .7rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .1em;
-      min-width: 56px;
+      text-transform: uppercase; letter-spacing: .1em; min-width: 70px;
     }
-
     button {
-      padding: 6px 14px; border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--bg); color: var(--text);
-      cursor: pointer; font-size: .82rem;
-      transition: border-color .15s, background .15s;
+      padding: 6px 13px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      cursor: pointer; font-size: .82rem; transition: border-color .15s, background .15s;
     }
     button:hover:not(:disabled) { border-color: #5050a0; background: #1a1a2a; }
     button:disabled { opacity: .3; cursor: not-allowed; }
-
-    .btn-tare  { border-color: var(--green); color: var(--green); }
-    .btn-tare:hover:not(:disabled) { background: #0d2016; }
-
-    .btn-diag  { border-color: var(--amber); color: var(--amber); }
-    .btn-diag:hover:not(:disabled) { background: #2a1e08; }
+    .btn-tare    { border-color: var(--green); color: var(--green); }
+    .btn-tare:hover:not(:disabled)  { background: #0d2016; }
+    .btn-diag    { border-color: var(--amber); color: var(--amber); }
+    .btn-diag:hover:not(:disabled)  { background: #2a1e08; }
     .btn-diag.active { background: #2e2010; }
+    .btn-record  { border-color: var(--red); color: var(--red); }
+    .btn-record:hover:not(:disabled) { background: #2a1010; }
+    .btn-record.recording { background: #2a1010; animation: pulse-rec 1s infinite; }
+    @keyframes pulse-rec { 50% { opacity: .6; } }
+    .btn-export  { border-color: var(--muted); }
+    .btn-wizard  { border-color: #a080f0; color: #a080f0; }
+    .btn-wizard:hover:not(:disabled) { background: #1a1030; }
+    .btn-ylock   { font-size: .78rem; padding: 4px 10px; }
+    .btn-ylock.active { border-color: var(--amber); color: var(--amber); background: #2a2010; }
+
+    .sep { width: 1px; height: 24px; background: var(--border); margin: 0 2px; }
 
     /* ── Cal groups ── */
-    .cal-group { display: flex; align-items: center; gap: 6px; }
-
-    .cal-name {
-      font-size: .75rem; font-weight: 600;
-      min-width: 26px; text-align: right;
-    }
+    .cal-group { display: flex; align-items: center; gap: 5px; }
+    .cal-name { font-size: .75rem; font-weight: 600; min-width: 26px; text-align: right; }
     .cal-group:nth-child(1) .cal-name { color: var(--lc1); }
     .cal-group:nth-child(2) .cal-name { color: var(--lc2); }
     .cal-group:nth-child(3) .cal-name { color: var(--lc3); }
     .cal-group:nth-child(4) .cal-name { color: var(--lc4); }
-
-    .cal-group button { padding: 5px 11px; font-size: .95rem; line-height: 1; }
-
+    .cal-group button { padding: 5px 10px; font-size: .92rem; line-height: 1; }
     .cal-readout {
-      font-size: .75rem;
-      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: .75rem; font-family: 'Consolas', monospace;
       font-variant-numeric: tabular-nums;
-      padding: 4px 8px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      min-width: 72px;
-      text-align: center;
-      color: var(--text);
-      letter-spacing: .02em;
+      padding: 4px 7px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 5px; min-width: 68px; text-align: center;
     }
 
-    .sep { width: 1px; height: 26px; background: var(--border); margin: 0 2px; }
+    /* ── Threshold inputs ── */
+    .thr-group { display: flex; align-items: center; gap: 5px; }
+    .thr-label { font-size: .75rem; font-weight: 600; min-width: 26px; text-align: right; }
+    .thr-group:nth-child(1) .thr-label { color: var(--lc1); }
+    .thr-group:nth-child(2) .thr-label { color: var(--lc2); }
+    .thr-group:nth-child(3) .thr-label { color: var(--lc3); }
+    .thr-group:nth-child(4) .thr-label { color: var(--lc4); }
+    .thr-input {
+      width: 80px; padding: 5px 8px; font-size: .78rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 5px; color: var(--text); text-align: center;
+    }
+    .thr-input:focus { outline: none; border-color: #5050a0; }
+    .thr-input::placeholder { color: var(--muted); font-size: .72rem; }
 
     /* ── Log ── */
     #log {
-      font-size: .72rem; font-family: monospace;
-      color: var(--muted); padding: 8px 12px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; height: 48px; overflow-y: auto;
-      line-height: 1.6;
-      white-space: pre-wrap;
+      font-size: .72rem; font-family: monospace; color: var(--muted);
+      padding: 8px 12px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; height: 44px; overflow-y: auto; white-space: pre-wrap;
     }
 
-    /* ── No-serial warning ── */
+    /* ── No-serial ── */
     #no-serial {
-      display: none;
-      padding: 10px 16px; border-radius: 8px;
-      background: #2a1010; border: 1px solid var(--red);
-      color: var(--red); font-size: .82rem;
+      display: none; padding: 10px 16px; border-radius: 8px;
+      background: #2a1010; border: 1px solid var(--red); color: var(--red); font-size: .82rem;
+    }
+
+    /* ── Wizard modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.75);
+      display: flex; align-items: center; justify-content: center; z-index: 200;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px; width: 380px; max-width: 95vw;
+    }
+    .modal h2 { font-size: 1rem; margin-bottom: 18px; color: #a080f0; }
+    .modal p { font-size: .85rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+    .modal label { font-size: .78rem; color: var(--muted); display: block; margin-bottom: 5px; }
+    .modal select, .modal input[type=number] {
+      width: 100%; padding: 7px 10px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-size: .85rem; margin-bottom: 14px;
+    }
+    .modal select:focus, .modal input:focus { outline: none; border-color: #a080f0; }
+    .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+    .modal-step { display: flex; flex-direction: column; }
+    .modal-step.hidden { display: none; }
+    .wiz-success { color: var(--green); font-size: .9rem; font-weight: 600; }
+    .wiz-result-val { font-family: monospace; color: var(--text); }
+    .countdown {
+      font-size: .78rem; color: var(--amber);
+      height: 18px; margin-bottom: 8px;
     }
   </style>
 </head>
@@ -245,112 +248,224 @@
 </header>
 
 <main>
+  <div id="no-serial">Web Serial API not available — open in Chrome or Edge (v89+).</div>
 
-  <div id="no-serial">
-    Web Serial API is not available. Open this file in Chrome or Edge (version 89+).
-  </div>
-
+  <!-- Value cards -->
   <div class="cards">
-    <div class="card"><div class="card-label">LC1</div><div class="card-value" id="val-0">—</div><div class="card-unit" id="unit-0">units</div></div>
-    <div class="card"><div class="card-label">LC2</div><div class="card-value" id="val-1">—</div><div class="card-unit" id="unit-1">units</div></div>
-    <div class="card"><div class="card-label">LC3</div><div class="card-value" id="val-2">—</div><div class="card-unit" id="unit-2">units</div></div>
-    <div class="card"><div class="card-label">LC4</div><div class="card-value" id="val-3">—</div><div class="card-unit" id="unit-3">units</div></div>
+    <div class="card" id="card-0">
+      <div class="card-label">LC1</div>
+      <div class="card-value" id="val-0">—</div>
+      <div class="card-unit" id="unit-0">units</div>
+      <div class="card-minmax">
+        <span><span class="mm-label">↓</span><span id="min-0">—</span></span>
+        <span><span class="mm-label">↑</span><span id="max-0">—</span></span>
+      </div>
+    </div>
+    <div class="card" id="card-1">
+      <div class="card-label">LC2</div>
+      <div class="card-value" id="val-1">—</div>
+      <div class="card-unit" id="unit-1">units</div>
+      <div class="card-minmax">
+        <span><span class="mm-label">↓</span><span id="min-1">—</span></span>
+        <span><span class="mm-label">↑</span><span id="max-1">—</span></span>
+      </div>
+    </div>
+    <div class="card" id="card-2">
+      <div class="card-label">LC3</div>
+      <div class="card-value" id="val-2">—</div>
+      <div class="card-unit" id="unit-2">units</div>
+      <div class="card-minmax">
+        <span><span class="mm-label">↓</span><span id="min-2">—</span></span>
+        <span><span class="mm-label">↑</span><span id="max-2">—</span></span>
+      </div>
+    </div>
+    <div class="card" id="card-3">
+      <div class="card-label">LC4</div>
+      <div class="card-value" id="val-3">—</div>
+      <div class="card-unit" id="unit-3">units</div>
+      <div class="card-minmax">
+        <span><span class="mm-label">↓</span><span id="min-3">—</span></span>
+        <span><span class="mm-label">↑</span><span id="max-3">—</span></span>
+      </div>
+    </div>
   </div>
 
+  <!-- Chart -->
   <div class="chart-wrap">
-    <canvas id="chart"></canvas>
+    <div class="chart-canvas-wrap"><canvas id="chart"></canvas></div>
+    <div class="chart-controls">
+      <div class="ch-toggles">
+        <button class="ch-toggle active" id="ch-0">LC1</button>
+        <button class="ch-toggle active" id="ch-1">LC2</button>
+        <button class="ch-toggle active" id="ch-2">LC3</button>
+        <button class="ch-toggle active" id="ch-3">LC4</button>
+      </div>
+      <button class="btn-ylock" id="btn-ylock">Lock Y-axis</button>
+    </div>
   </div>
 
+  <!-- Controls -->
   <div class="panel">
+
+    <!-- Tare -->
     <div class="panel-row">
-      <span class="row-label">Control</span>
-      <button class="btn-tare" id="btn-tare" disabled>Tare All</button>
+      <span class="row-label">Tare</span>
+      <button class="btn-tare" id="btn-tare-all" disabled>All</button>
+      <button class="btn-tare" id="btn-tare-0" disabled>LC1</button>
+      <button class="btn-tare" id="btn-tare-1" disabled>LC2</button>
+      <button class="btn-tare" id="btn-tare-2" disabled>LC3</button>
+      <button class="btn-tare" id="btn-tare-3" disabled>LC4</button>
+    </div>
+
+    <!-- Mode -->
+    <div class="panel-row">
+      <span class="row-label">Mode</span>
       <button class="btn-diag" id="btn-diag" disabled>Diag Mode</button>
     </div>
+
+    <!-- Calibration -->
     <div class="panel-row">
       <span class="row-label">Cal ±10</span>
       <div class="cal-group">
         <span class="cal-name">LC1</span>
         <span class="cal-readout" id="cal-val-0">—</span>
-        <button id="cal-0-up" disabled title="q">+</button>
-        <button id="cal-0-dn" disabled title="a">−</button>
+        <button id="cal-0-up" disabled>+</button>
+        <button id="cal-0-dn" disabled>−</button>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC2</span>
         <span class="cal-readout" id="cal-val-1">—</span>
-        <button id="cal-1-up" disabled title="w">+</button>
-        <button id="cal-1-dn" disabled title="s">−</button>
+        <button id="cal-1-up" disabled>+</button>
+        <button id="cal-1-dn" disabled>−</button>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC3</span>
         <span class="cal-readout" id="cal-val-2">—</span>
-        <button id="cal-2-up" disabled title="e">+</button>
-        <button id="cal-2-dn" disabled title="d">−</button>
+        <button id="cal-2-up" disabled>+</button>
+        <button id="cal-2-dn" disabled>−</button>
       </div>
       <div class="sep"></div>
       <div class="cal-group">
         <span class="cal-name">LC4</span>
         <span class="cal-readout" id="cal-val-3">—</span>
-        <button id="cal-3-up" disabled title="r">+</button>
-        <button id="cal-3-dn" disabled title="f">−</button>
+        <button id="cal-3-up" disabled>+</button>
+        <button id="cal-3-dn" disabled>−</button>
+      </div>
+      <div class="sep"></div>
+      <button class="btn-wizard" id="btn-wizard" disabled>Wizard…</button>
+    </div>
+
+    <!-- Thresholds -->
+    <div class="panel-row">
+      <span class="row-label">Overload</span>
+      <div class="thr-group">
+        <span class="thr-label">LC1</span>
+        <input class="thr-input" id="thr-0" type="number" min="0" placeholder="disabled">
+      </div>
+      <div class="thr-group">
+        <span class="thr-label">LC2</span>
+        <input class="thr-input" id="thr-1" type="number" min="0" placeholder="disabled">
+      </div>
+      <div class="thr-group">
+        <span class="thr-label">LC3</span>
+        <input class="thr-input" id="thr-2" type="number" min="0" placeholder="disabled">
+      </div>
+      <div class="thr-group">
+        <span class="thr-label">LC4</span>
+        <input class="thr-input" id="thr-3" type="number" min="0" placeholder="disabled">
       </div>
     </div>
+
+    <!-- Tools -->
+    <div class="panel-row">
+      <span class="row-label">Record</span>
+      <button class="btn-record" id="btn-record" disabled>● Record</button>
+      <button class="btn-export" id="btn-export" disabled>↓ Export CSV</button>
+      <span id="rec-status" style="font-size:.75rem;color:var(--muted);margin-left:4px;"></span>
+    </div>
+
   </div>
 
   <div id="log">Not connected — click Connect and select COM4.</div>
-
 </main>
+
+<!-- Calibration wizard modal -->
+<div class="modal-overlay hidden" id="wizard-overlay">
+  <div class="modal">
+    <h2>Calibration Wizard</h2>
+
+    <div class="modal-step" id="wiz-step-1">
+      <label>Channel to calibrate</label>
+      <select id="wiz-ch">
+        <option value="0">LC1</option>
+        <option value="1">LC2</option>
+        <option value="2">LC3</option>
+        <option value="3">LC4</option>
+      </select>
+      <p>Remove all weight from the load cell, then click Tare. Wait for the countdown before adding weight.</p>
+      <div class="countdown" id="wiz-countdown"></div>
+      <div class="modal-btns">
+        <button id="wiz-cancel-1">Cancel</button>
+        <button id="wiz-tare-btn" style="border-color:#4ade80;color:#4ade80">Tare Channel</button>
+      </div>
+    </div>
+
+    <div class="modal-step hidden" id="wiz-step-2">
+      <p>Place your known weight on the load cell and enter its value below.</p>
+      <label>Known mass (in your units)</label>
+      <input type="number" id="wiz-mass" min="0.001" step="any" placeholder="e.g. 500">
+      <div class="modal-btns">
+        <button id="wiz-cancel-2">Cancel</button>
+        <button id="wiz-cal-btn" style="border-color:#a080f0;color:#a080f0">Calibrate</button>
+      </div>
+    </div>
+
+    <div class="modal-step hidden" id="wiz-step-3">
+      <p class="wiz-success">✓ Calibration complete</p>
+      <p>New calibration factor: <span class="wiz-result-val" id="wiz-result">—</span></p>
+      <div class="modal-btns">
+        <button id="wiz-done-btn">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <script>
 // ── Chart ──────────────────────────────────────────────────────────────────
-const MAX_PTS = 200;
-const LC_COLORS = ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0'];
+const MAX_PTS   = 200;
+const LC_COLORS = ['#ff6384','#36a2eb','#ffce56','#4bc0c0'];
 
-const chartDatasets = [0, 1, 2, 3].map(i => ({
-  label: `LC${i + 1}`,
+const chartDatasets = [0,1,2,3].map(i => ({
+  label: `LC${i+1}`,
   data: Array(MAX_PTS).fill(null),
   borderColor: LC_COLORS[i],
   backgroundColor: LC_COLORS[i] + '14',
-  borderWidth: 1.5,
-  pointRadius: 0,
-  tension: 0.3,
-  fill: false,
+  borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false,
 }));
 
 const chart = new Chart(document.getElementById('chart'), {
   type: 'line',
   data: { labels: Array(MAX_PTS).fill(''), datasets: chartDatasets },
   options: {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
+    animation: false, responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
     scales: {
       x: { display: false },
-      y: {
-        grid:  { color: '#252535' },
-        ticks: { color: '#60608a' },
-      },
+      y: { grid: { color: '#252535' }, ticks: { color: '#60608a' } },
     },
-    plugins: {
-      legend: { labels: { color: '#e0e0f0', boxWidth: 12, padding: 16 } },
-    },
+    plugins: { legend: { labels: { color: '#e0e0f0', boxWidth: 12, padding: 16 } } },
   },
 });
 
-// Decouple chart rendering from data rate using requestAnimationFrame
 let pendingChart = null;
-
-function pushChart(values) {
-  pendingChart = values;
-}
 
 (function renderLoop() {
   if (pendingChart) {
     chartDatasets.forEach((ds, i) => {
-      ds.data.push(pendingChart[i]);
+      ds.data.push(state.channelEnabled[i] ? pendingChart[i] : null);
       if (ds.data.length > MAX_PTS) ds.data.shift();
     });
     chart.update('none');
@@ -359,18 +474,44 @@ function pushChart(values) {
   requestAnimationFrame(renderLoop);
 })();
 
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {
+  channelEnabled: [true, true, true, true],
+  thresholds:     [0, 0, 0, 0],
+  minVals:        [null, null, null, null],
+  maxVals:        [null, null, null, null],
+  recording:      false,
+  recordedData:   [],
+  yLocked:        false,
+};
+
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const valEls    = [0,1,2,3].map(i => document.getElementById(`val-${i}`));
 const unitEls   = [0,1,2,3].map(i => document.getElementById(`unit-${i}`));
 const calValEls = [0,1,2,3].map(i => document.getElementById(`cal-val-${i}`));
+const minEls    = [0,1,2,3].map(i => document.getElementById(`min-${i}`));
+const maxEls    = [0,1,2,3].map(i => document.getElementById(`max-${i}`));
+const cardEls   = [0,1,2,3].map(i => document.getElementById(`card-${i}`));
+const thrInputs = [0,1,2,3].map(i => document.getElementById(`thr-${i}`));
 const logEl     = document.getElementById('log');
 const modeBadge = document.getElementById('mode-badge');
 const hzBadge   = document.getElementById('hz-badge');
 const statusDot = document.getElementById('status-dot');
 const connectBtn= document.getElementById('connect-btn');
 const btnDiag   = document.getElementById('btn-diag');
+const btnRecord = document.getElementById('btn-record');
+const btnExport = document.getElementById('btn-export');
+const recStatus = document.getElementById('rec-status');
+const btnYLock  = document.getElementById('btn-ylock');
 
-// ── Hz counter ────────────────────────────────────────────────────────────
+const allCtrlBtns = [
+  'btn-tare-all','btn-tare-0','btn-tare-1','btn-tare-2','btn-tare-3',
+  'btn-diag','btn-wizard','btn-record',
+  'cal-0-up','cal-0-dn','cal-1-up','cal-1-dn',
+  'cal-2-up','cal-2-dn','cal-3-up','cal-3-dn',
+].map(id => document.getElementById(id));
+
+// ── Hz counter ─────────────────────────────────────────────────────────────
 let packetCount = 0;
 setInterval(() => {
   if (packetCount > 0) {
@@ -383,27 +524,48 @@ setInterval(() => {
   packetCount = 0;
 }, 1000);
 
-const allCtrlBtns = [
-  'btn-tare','btn-diag',
-  'cal-0-up','cal-0-dn','cal-1-up','cal-1-dn',
-  'cal-2-up','cal-2-dn','cal-3-up','cal-3-dn',
-].map(id => document.getElementById(id));
-
 // ── UI helpers ─────────────────────────────────────────────────────────────
 function setConnected(on) {
   connectBtn.textContent = on ? 'Disconnect' : 'Connect';
   connectBtn.classList.toggle('connected', on);
   statusDot.classList.toggle('on', on);
   allCtrlBtns.forEach(b => (b.disabled = !on));
-  if (!on) calValEls.forEach(el => (el.textContent = '—'));
+  if (!on) {
+    calValEls.forEach(el => (el.textContent = '—'));
+    cardEls.forEach(c => c.classList.remove('overload'));
+  }
 }
 
 function log(msg) { logEl.textContent = msg; }
 
+function setDiag(on) {
+  modeBadge.textContent = on ? 'DIAG' : 'NORMAL';
+  modeBadge.classList.toggle('diag', on);
+  btnDiag.classList.toggle('active', on);
+  unitEls.forEach(el => (el.textContent = on ? 'raw counts' : 'units'));
+}
+
 function setValues(values) {
   values.forEach((v, i) => {
     valEls[i].textContent = Number.isFinite(v) ? v.toFixed(2) : '—';
+    if (!Number.isFinite(v)) return;
+    // min/max
+    if (state.minVals[i] === null || v < state.minVals[i]) {
+      state.minVals[i] = v;
+      minEls[i].textContent = v.toFixed(2);
+    }
+    if (state.maxVals[i] === null || v > state.maxVals[i]) {
+      state.maxVals[i] = v;
+      maxEls[i].textContent = v.toFixed(2);
+    }
+    // local threshold check
+    const over = state.thresholds[i] > 0 && Math.abs(v) > state.thresholds[i];
+    cardEls[i].classList.toggle('overload', over);
   });
+  if (state.recording) {
+    state.recordedData.push({ t: Date.now(), v: [...values] });
+    recStatus.textContent = `${state.recordedData.length} pts`;
+  }
 }
 
 function setCalValues(values) {
@@ -412,23 +574,87 @@ function setCalValues(values) {
   });
 }
 
-let diagActive = false;
-
-function setDiag(on) {
-  diagActive = on;
-  modeBadge.textContent = on ? 'DIAG' : 'NORMAL';
-  modeBadge.classList.toggle('diag', on);
-  btnDiag.classList.toggle('active', on);
-  unitEls.forEach(el => (el.textContent = on ? 'raw counts' : 'units'));
+function resetMinMax(ch) {
+  const indices = ch !== undefined ? [ch] : [0,1,2,3];
+  indices.forEach(i => {
+    state.minVals[i] = null; state.maxVals[i] = null;
+    minEls[i].textContent = '—'; maxEls[i].textContent = '—';
+  });
 }
 
-// ── Serial ─────────────────────────────────────────────────────────────────
-let port = null, writer = null, reader = null;
-let knownPort = null;
+// ── Channel toggles ────────────────────────────────────────────────────────
+[0,1,2,3].forEach(i => {
+  document.getElementById(`ch-${i}`).addEventListener('click', () => {
+    state.channelEnabled[i] = !state.channelEnabled[i];
+    chartDatasets[i].hidden = !state.channelEnabled[i];
+    document.getElementById(`ch-${i}`).classList.toggle('active', state.channelEnabled[i]);
+    chart.update();
+  });
+});
 
-async function send(char) {
+// ── Y-axis lock ────────────────────────────────────────────────────────────
+btnYLock.addEventListener('click', () => {
+  state.yLocked = !state.yLocked;
+  if (state.yLocked) {
+    chart.options.scales.y.min = chart.scales.y.min;
+    chart.options.scales.y.max = chart.scales.y.max;
+  } else {
+    delete chart.options.scales.y.min;
+    delete chart.options.scales.y.max;
+  }
+  btnYLock.classList.toggle('active', state.yLocked);
+  chart.update();
+});
+
+// ── Recording ──────────────────────────────────────────────────────────────
+btnRecord.addEventListener('click', () => {
+  if (!state.recording) {
+    state.recording = true;
+    state.recordedData = [];
+    btnRecord.textContent = '■ Stop';
+    btnRecord.classList.add('recording');
+    btnExport.disabled = true;
+    recStatus.textContent = '0 pts';
+  } else {
+    state.recording = false;
+    btnRecord.textContent = '● Record';
+    btnRecord.classList.remove('recording');
+    btnExport.disabled = state.recordedData.length === 0;
+    recStatus.textContent = `${state.recordedData.length} pts saved`;
+  }
+});
+
+btnExport.addEventListener('click', () => {
+  const header = 'Timestamp_ms,LC1,LC2,LC3,LC4\n';
+  const rows = state.recordedData.map(r =>
+    `${r.t},${r.v.map(v => v.toFixed(2)).join(',')}`
+  ).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `LBV1_${new Date().toISOString().slice(0,19).replace(/[T:]/g,'-')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ── Threshold inputs ───────────────────────────────────────────────────────
+thrInputs.forEach((inp, i) => {
+  function applyThreshold() {
+    const v = parseFloat(inp.value);
+    state.thresholds[i] = (isFinite(v) && v > 0) ? v : 0;
+    if (port) send(`o${i}:${state.thresholds[i]}`);
+  }
+  inp.addEventListener('change', applyThreshold);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') applyThreshold(); });
+});
+
+// ── Serial ─────────────────────────────────────────────────────────────────
+let port = null, writer = null, reader = null, knownPort = null;
+
+async function send(cmd) {
   if (!writer) return;
-  try { await writer.write(new TextEncoder().encode(char)); }
+  try { await writer.write(new TextEncoder().encode(cmd + '\n')); }
   catch(e) { log(`Send error: ${e.message}`); }
 }
 
@@ -438,59 +664,44 @@ async function disconnect() {
   try { if (writer) { writer.releaseLock(); } } catch(_) {}
   try { await port.close(); } catch(_) {}
   reader = null; writer = null; port = null; knownPort = null;
-  setConnected(false);
-  setDiag(false);
+  setConnected(false); setDiag(false);
   log('Disconnected.');
 }
 
 async function connect() {
   let target = knownPort;
-
   if (!target) {
-    try {
-      target = await navigator.serial.requestPort();
-    } catch(e) {
-      log(`Cancelled: ${e.message}`);
-      return;
-    }
+    try { target = await navigator.serial.requestPort(); }
+    catch(e) { log(`Cancelled: ${e.message}`); return; }
   }
-
   try {
     await target.open({ baudRate: 115200 });
   } catch(e) {
     if (e.message.includes('already open')) {
-      // still open from previous session — reuse as-is
+      // reuse as-is
     } else {
       knownPort = null;
       log('Could not reopen last port — please select again.');
       try {
         target = await navigator.serial.requestPort();
         await target.open({ baudRate: 115200 });
-      } catch(e2) {
-        log(`Connection failed: ${e2.message}`);
-        return;
-      }
+      } catch(e2) { log(`Connection failed: ${e2.message}`); return; }
     }
   }
-
-  port = target;
-  knownPort = target;
+  port = target; knownPort = target;
   writer = port.writable.getWriter();
   setConnected(true);
   log('Connected — waiting for data...');
-
-  // Request cal values after a short delay (handles reconnect to running firmware)
   setTimeout(() => send('c'), 800);
 
   reader = port.readable.getReader();
-  const textDecoder = new TextDecoder();
+  const dec = new TextDecoder();
   let buf = '';
-
   try {
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      buf += textDecoder.decode(value, { stream: true });
+      buf += dec.decode(value, { stream: true });
       let nl;
       while ((nl = buf.indexOf('\n')) !== -1) {
         handleLine(buf.slice(0, nl).trim());
@@ -506,7 +717,7 @@ async function connect() {
 
 // ── Packet parser ──────────────────────────────────────────────────────────
 function parsePipe(str, scale) {
-  const parts = str.replace('$', '').split('|');
+  const parts = str.replace('$','').split('|');
   if (parts.length !== 4) return null;
   const vals = parts.map(v => Number(v) * scale);
   return vals.every(Number.isFinite) ? vals : null;
@@ -515,58 +726,131 @@ function parsePipe(str, scale) {
 function handleLine(line) {
   if (!line) return;
 
-  // Firmware banner: "LBV1 v1.3"
   if (line.startsWith('LBV1 v')) {
     document.getElementById('version-badge').textContent = line.slice(5);
     log(`Firmware: ${line} — streaming.`);
     send('c');
     return;
   }
+  if (line.startsWith('mode=')) { setDiag(line === 'mode=DIAG'); return; }
 
-  // Mode toggle: "mode=DIAG" / "mode=NORMAL"
-  if (line.startsWith('mode=')) {
-    setDiag(line === 'mode=DIAG');
-    return;
-  }
-
-  // Cal values: "CAL:140000|140000|140000|140000$" (integers ×10)
+  // CAL:140000|... (integers ×10)
   if (line.startsWith('CAL:')) {
     const vals = parsePipe(line.slice(4), 0.1);
     if (vals) setCalValues(vals);
     return;
   }
-
-  // Diag: "RAW:v1|v2|v3|v4$" (integers, no scaling)
-  if (line.startsWith('RAW:')) {
-    const vals = parsePipe(line.slice(4), 1);
-    if (vals) { setValues(vals); pushChart(vals); packetCount++; }
+  // THR:50000|... (integers ×100)
+  if (line.startsWith('THR:')) {
+    const vals = parsePipe(line.slice(4), 0.01);
+    if (vals) {
+      vals.forEach((v, i) => {
+        state.thresholds[i] = v;
+        thrInputs[i].value = v > 0 ? v : '';
+      });
+    }
     return;
   }
-
-  // Normal: "v1|v2|v3|v4$" (integers ×100)
+  // OVL:0|1|0|0$
+  if (line.startsWith('OVL:')) {
+    const vals = parsePipe(line.slice(4), 1);
+    if (vals) vals.forEach((v, i) => cardEls[i].classList.toggle('overload', v !== 0));
+    return;
+  }
+  // RAW:... (integers, no scaling)
+  if (line.startsWith('RAW:')) {
+    const vals = parsePipe(line.slice(4), 1);
+    if (vals) { setValues(vals); pendingChart = vals; packetCount++; }
+    return;
+  }
+  // Normal: integers ×100
   if (line.includes('|')) {
     const vals = parsePipe(line, 0.01);
-    if (vals) { setValues(vals); pushChart(vals); packetCount++; }
+    if (vals) { setValues(vals); pendingChart = vals; packetCount++; }
   }
 }
 
 // ── Button wiring ──────────────────────────────────────────────────────────
 connectBtn.addEventListener('click', () => port ? disconnect() : connect());
 
-document.getElementById('btn-tare').addEventListener('click', () => send('t'));
-document.getElementById('btn-diag').addEventListener('click', () => send('p'));
+document.getElementById('btn-tare-all').addEventListener('click', () => {
+  send('t'); resetMinMax();
+});
+[0,1,2,3].forEach(i => {
+  document.getElementById(`btn-tare-${i}`).addEventListener('click', () => {
+    send(`t${i}`); resetMinMax(i);
+  });
+});
 
-[['q','a'],['w','s'],['e','d'],['r','f']].forEach(([up, dn], i) => {
+btnDiag.addEventListener('click', () => send('p'));
+
+[['q','a'],['w','s'],['e','d'],['r','f']].forEach(([up,dn], i) => {
   document.getElementById(`cal-${i}-up`).addEventListener('click', () => send(up));
   document.getElementById(`cal-${i}-dn`).addEventListener('click', () => send(dn));
 });
 
-// ── Web Serial availability check ─────────────────────────────────────────
+// ── Calibration wizard ─────────────────────────────────────────────────────
+const wizOverlay = document.getElementById('wizard-overlay');
+let wizCh = 0;
+
+document.getElementById('btn-wizard').addEventListener('click', () => {
+  document.getElementById('wiz-step-1').classList.remove('hidden');
+  document.getElementById('wiz-step-2').classList.add('hidden');
+  document.getElementById('wiz-step-3').classList.add('hidden');
+  document.getElementById('wiz-countdown').textContent = '';
+  document.getElementById('wiz-tare-btn').disabled = false;
+  wizOverlay.classList.remove('hidden');
+});
+
+function closeWizard() { wizOverlay.classList.add('hidden'); }
+document.getElementById('wiz-cancel-1').addEventListener('click', closeWizard);
+document.getElementById('wiz-cancel-2').addEventListener('click', closeWizard);
+document.getElementById('wiz-done-btn').addEventListener('click', closeWizard);
+
+document.getElementById('wiz-tare-btn').addEventListener('click', () => {
+  wizCh = parseInt(document.getElementById('wiz-ch').value);
+  send(`t${wizCh}`);
+  resetMinMax(wizCh);
+  const btn = document.getElementById('wiz-tare-btn');
+  const cd  = document.getElementById('wiz-countdown');
+  btn.disabled = true;
+  let secs = 4;
+  cd.textContent = `Taring… ${secs}s`;
+  const timer = setInterval(() => {
+    secs--;
+    if (secs <= 0) {
+      clearInterval(timer);
+      cd.textContent = 'Ready — place your known weight.';
+      document.getElementById('wiz-step-1').classList.add('hidden');
+      document.getElementById('wiz-step-2').classList.remove('hidden');
+      document.getElementById('wiz-mass').value = '';
+      document.getElementById('wiz-mass').focus();
+    } else {
+      cd.textContent = `Taring… ${secs}s`;
+    }
+  }, 1000);
+});
+
+document.getElementById('wiz-cal-btn').addEventListener('click', () => {
+  const mass = parseFloat(document.getElementById('wiz-mass').value);
+  if (!mass || mass <= 0) {
+    document.getElementById('wiz-mass').focus();
+    return;
+  }
+  send(`k${wizCh}:${mass}`);
+  // Wait for CAL: message to update the display, then show result
+  setTimeout(() => {
+    document.getElementById('wiz-step-2').classList.add('hidden');
+    document.getElementById('wiz-step-3').classList.remove('hidden');
+    document.getElementById('wiz-result').textContent = calValEls[wizCh].textContent;
+  }, 600);
+});
+
+// ── Web Serial check ───────────────────────────────────────────────────────
 if (!('serial' in navigator)) {
   document.getElementById('no-serial').style.display = 'block';
   connectBtn.disabled = true;
 }
 </script>
-
 </body>
 </html>

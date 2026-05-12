@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Read(//c/Users/ib_st/AppData/Local/Programs/Arduino IDE//**)",
+      "Bash($CLI board *)",
+      "Bash($CLI compile *)",
+      "Bash($CLI upload *)",
+      "Bash('/c/Users/ib_st/AppData/Local/Programs/Arduino IDE/resources/app/lib/backend/resources/arduino-cli.exe' compile --fqbn arduino:avr:nano C:/Users/ib_st/Desktop/LBV1)",
+      "Bash('/c/Users/ib_st/AppData/Local/Programs/Arduino IDE/resources/app/lib/backend/resources/arduino-cli.exe' upload --fqbn arduino:avr:nano -p COM4 C:/Users/ib_st/Desktop/LBV1)",
+      "Bash(grep -v \"//\")",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git config *)",
+      "Bash(gh repo *)",
+      "Bash(git push *)",
+      "Bash(C:\\\\Users\\\\ib_st\\\\AppData\\\\Local\\\\Programs\\\\Arduino IDE\\\\resources\\\\app\\\\lib\\\\backend\\\\resources\\\\arduino-cli.exe compile *)",
+      "Bash(C:\\\\Users\\\\ib_st\\\\AppData\\\\Local\\\\Programs\\\\Arduino IDE\\\\resources\\\\app\\\\lib\\\\backend\\\\resources\\\\arduino-cli.exe upload *)",
+      "WebFetch(domain:protonu.com)"
+    ]
+  }
+}

@@ -309,6 +309,67 @@
     .wiz-success { color: var(--green); font-size: .88rem; font-weight: 700; margin-bottom: 8px; }
     .wiz-result-val { font-family: 'Consolas',monospace; color: var(--white); }
     .countdown { font-size: .75rem; color: var(--amber); height: 18px; margin-bottom: 8px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 6px; }
+    .tab-btn {
+      padding: 7px 18px; border-radius: 20px; font-size: .8rem; font-weight: 700;
+      border: 1px solid var(--border); background: transparent; color: var(--text);
+      cursor: pointer; font-family: var(--font); transition: all .15s; letter-spacing: .04em;
+    }
+    .tab-btn:hover { color: var(--white); }
+    .tab-btn.active { color: var(--white); border-color: var(--red); background: rgba(224,48,48,.1); }
+    .tab-panel { display: flex; flex-direction: column; gap: 16px; }
+    .tab-panel.hidden { display: none; }
+
+    /* ── Balance / Center of Pressure ── */
+    .balance-wrap { display: flex; gap: 20px; flex-wrap: wrap; align-items: stretch; }
+    .plate-card {
+      flex: 1 1 440px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .plate { position: relative; width: 100%; max-width: 540px; aspect-ratio: 1; }
+    .plate canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .corner {
+      position: absolute; display: flex; flex-direction: column; gap: 1px;
+      font-variant-numeric: tabular-nums; pointer-events: none; z-index: 2;
+    }
+    .corner-name { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .9; }
+    .corner-force { font-size: .95rem; font-weight: 800; color: var(--white); }
+    .corner-tl { top: 10px; left: 13px; align-items: flex-start; }
+    .corner-tr { top: 10px; right: 13px; align-items: flex-end; }
+    .corner-bl { bottom: 10px; left: 13px; align-items: flex-start; }
+    .corner-br { bottom: 10px; right: 13px; align-items: flex-end; }
+
+    .balance-side {
+      flex: 1 1 250px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .bal-readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bal-stat { display: flex; flex-direction: column; gap: 4px; }
+    .bal-stat-label { font-size: .58rem; text-transform: uppercase; letter-spacing: .14em; color: var(--text); font-weight: 700; }
+    .bal-stat-val { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--white); line-height: 1; }
+    .bal-stat-val.muted { color: var(--text); opacity: .5; }
+    .bal-section-label { font-size: .58rem; text-transform: uppercase; letter-spacing: .14em; color: var(--text); font-weight: 700; }
+    .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .map-cell { display: flex; flex-direction: column; gap: 4px; }
+    .map-cell > span { font-size: .56rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text); }
+    .map-cell select {
+      padding: 5px 8px; font-size: .75rem; background: rgba(255,255,255,.03);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--white);
+      cursor: pointer; font-family: var(--font);
+    }
+    .map-cell select:focus { outline: none; border-color: var(--red); }
+    .bal-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .bal-controls label { font-size: .68rem; color: var(--text); text-transform: uppercase; letter-spacing: .08em; }
+    .bal-minload {
+      width: 70px; padding: 5px 8px; font-size: .75rem; background: rgba(255,255,255,.03);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--white); text-align: center; font-family: var(--font);
+    }
+    .bal-minload:focus { outline: none; border-color: var(--red); }
+    .bal-hint { font-size: .66rem; color: var(--text); line-height: 1.65; }
   </style>
 </head>
 <body>
@@ -332,6 +393,13 @@
 
 <main>
   <div id="no-serial">Web Serial API not available — open in Chrome or Edge (v89+).</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="monitor">Monitor</button>
+    <button class="tab-btn" data-tab="balance">Balance</button>
+  </div>
+
+  <section class="tab-panel" id="tab-monitor">
 
   <div class="cards">
     <div class="card" id="card-0">
@@ -536,6 +604,46 @@
     <kbd>B</kbd> Baseline &nbsp;
     <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> Toggle CH
   </div>
+
+  </section>
+
+  <section class="tab-panel hidden" id="tab-balance">
+    <div class="balance-wrap">
+      <div class="plate-card">
+        <div class="plate" id="plate">
+          <canvas id="cop-canvas"></canvas>
+          <div class="corner corner-tl"><span class="corner-name" id="cn-tl">—</span><span class="corner-force" id="cf-tl">—</span></div>
+          <div class="corner corner-tr"><span class="corner-name" id="cn-tr">—</span><span class="corner-force" id="cf-tr">—</span></div>
+          <div class="corner corner-bl"><span class="corner-name" id="cn-bl">—</span><span class="corner-force" id="cf-bl">—</span></div>
+          <div class="corner corner-br"><span class="corner-name" id="cn-br">—</span><span class="corner-force" id="cf-br">—</span></div>
+        </div>
+      </div>
+      <div class="balance-side">
+        <div class="bal-readouts">
+          <div class="bal-stat"><span class="bal-stat-label">X offset</span><span class="bal-stat-val muted" id="bal-x">—</span></div>
+          <div class="bal-stat"><span class="bal-stat-label">Y offset</span><span class="bal-stat-val muted" id="bal-y">—</span></div>
+          <div class="bal-stat"><span class="bal-stat-label">Off-center</span><span class="bal-stat-val muted" id="bal-r">—</span></div>
+          <div class="bal-stat"><span class="bal-stat-label">Total load</span><span class="bal-stat-val muted" id="bal-total">—</span></div>
+        </div>
+        <div>
+          <div class="bal-section-label">Corner → Load cell</div>
+          <div class="map-grid">
+            <div class="map-cell"><span>Top-left</span><select id="map-tl"></select></div>
+            <div class="map-cell"><span>Top-right</span><select id="map-tr"></select></div>
+            <div class="map-cell"><span>Bottom-left</span><select id="map-bl"></select></div>
+            <div class="map-cell"><span>Bottom-right</span><select id="map-br"></select></div>
+          </div>
+        </div>
+        <div class="bal-controls">
+          <label for="bal-minload">Min load</label>
+          <input type="number" class="bal-minload" id="bal-minload" min="0" step="any" value="0.1">
+          <button class="toggle-btn active" id="bal-trail">Trail</button>
+          <button class="app-btn" id="bal-clear" style="font-size:.74rem;padding:4px 11px">Clear</button>
+        </div>
+        <div class="bal-hint">The dot is the center of pressure — where the combined weight sits on the plate. Set the corner mapping to match how your load cells are physically placed. Negative readings count as zero.</div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div class="modal-overlay hidden" id="wizard-overlay">
@@ -634,6 +742,7 @@ let pendingRender = false;
     chart.update('none');
     pendingRender = false;
   }
+  if (activeTab === 'balance') drawCoP();
   requestAnimationFrame(renderLoop);
 })();
 
@@ -760,6 +869,7 @@ function setValues(rawVals) {
     state.recordedData.push({ t: Date.now(), v: [...rawVals], sum: rawSum });
     recStatus.textContent = `${state.recordedData.length} pts`;
   }
+  copPush(dispVals);
   pendingRender = true;
 }
 
@@ -1097,6 +1207,150 @@ document.addEventListener('keydown', e => {
   else if (k === '3') document.getElementById('ch-2').click();
   else if (k === '4') document.getElementById('ch-3').click();
 });
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+// declared with var so the early renderLoop sync call sees it (no TDZ)
+var activeTab = 'monitor';
+const tabPanels = { monitor: document.getElementById('tab-monitor'), balance: document.getElementById('tab-balance') };
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    if (tab === activeTab) return;
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    Object.entries(tabPanels).forEach(([k, el]) => el.classList.toggle('hidden', k !== tab));
+    if (tab === 'monitor') chart.resize();
+    if (tab === 'balance') resizeCoP();
+  });
+});
+
+// ── Center of Pressure ─────────────────────────────────────────────────────
+// Plate corners in normalised coords, order [TL, TR, BL, BR]
+const CORNER_X = [-1,  1, -1,  1];
+const CORNER_Y = [ 1,  1, -1, -1];
+const cornerMap = [0, 1, 2, 3];   // which LC channel feeds each corner [TL,TR,BL,BR]
+
+const cornerForceEls = ['cf-tl','cf-tr','cf-bl','cf-br'].map(id => document.getElementById(id));
+const cornerNameEls  = ['cn-tl','cn-tr','cn-bl','cn-br'].map(id => document.getElementById(id));
+const copCanvas = document.getElementById('cop-canvas');
+const copCtx    = copCanvas.getContext('2d');
+const balXEl = document.getElementById('bal-x'), balYEl = document.getElementById('bal-y');
+const balREl = document.getElementById('bal-r'), balTotalEl = document.getElementById('bal-total');
+
+const cop = { x: 0, y: 0, tx: 0, ty: 0, active: false, total: 0, mag: 0 };
+let copMinLoad = 0.1, copTrailOn = true;
+const copTrail = [];
+const COP_TRAIL_MAX = 120;
+
+// Mapping selects
+['map-tl','map-tr','map-bl','map-br'].forEach((id, corner) => {
+  const sel = document.getElementById(id);
+  for (let ch = 0; ch < 4; ch++) {
+    const o = document.createElement('option');
+    o.value = ch; o.textContent = `LC${ch+1}`;
+    sel.appendChild(o);
+  }
+  sel.value = cornerMap[corner];
+  sel.addEventListener('change', () => { cornerMap[corner] = parseInt(sel.value); refreshCornerNames(); });
+});
+function refreshCornerNames() {
+  cornerMap.forEach((ch, c) => {
+    cornerNameEls[c].textContent = `LC${ch+1}`;
+    cornerNameEls[c].style.color = LC_COLORS[ch];
+  });
+}
+refreshCornerNames();
+
+document.getElementById('bal-minload').addEventListener('change', function() {
+  const v = parseFloat(this.value); copMinLoad = (isFinite(v) && v >= 0) ? v : 0;
+});
+document.getElementById('bal-trail').addEventListener('click', function() {
+  copTrailOn = !copTrailOn; this.classList.toggle('active', copTrailOn);
+  if (!copTrailOn) copTrail.length = 0;
+});
+document.getElementById('bal-clear').addEventListener('click', () => { copTrail.length = 0; });
+
+// Called on every data packet with the (smoothed) display values
+function copPush(vals) {
+  cornerForceEls.forEach((el, c) => { const v = vals[cornerMap[c]]; el.textContent = Number.isFinite(v) ? v.toFixed(1) : '—'; });
+  const w = cornerMap.map(ch => Math.max(0, vals[ch] || 0));   // clamp negatives to 0
+  const total = w[0] + w[1] + w[2] + w[3];
+  cop.total = total;
+
+  if (total < copMinLoad || total <= 0) {
+    cop.active = false;
+    balXEl.textContent = balYEl.textContent = balREl.textContent = '—';
+    balXEl.classList.add('muted'); balYEl.classList.add('muted'); balREl.classList.add('muted');
+    balTotalEl.textContent = total.toFixed(1); balTotalEl.classList.toggle('muted', total <= 0);
+    return;
+  }
+  let x = 0, y = 0;
+  for (let i = 0; i < 4; i++) { x += w[i] * CORNER_X[i]; y += w[i] * CORNER_Y[i]; }
+  x /= total; y /= total;
+  cop.tx = x; cop.ty = y; cop.active = true; cop.mag = Math.hypot(x, y);
+
+  balXEl.textContent = (x >= 0 ? '+' : '') + x.toFixed(2); balXEl.classList.remove('muted');
+  balYEl.textContent = (y >= 0 ? '+' : '') + y.toFixed(2); balYEl.classList.remove('muted');
+  balREl.textContent = cop.mag.toFixed(2);                 balREl.classList.remove('muted');
+  balTotalEl.textContent = total.toFixed(1);               balTotalEl.classList.remove('muted');
+}
+
+function resizeCoP() {
+  const r = copCanvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  copCanvas.width  = Math.max(1, Math.round(r.width  * dpr));
+  copCanvas.height = Math.max(1, Math.round(r.height * dpr));
+}
+window.addEventListener('resize', () => { if (activeTab === 'balance') resizeCoP(); });
+
+function drawCoP() {
+  const W = copCanvas.width, H = copCanvas.height;
+  if (W < 2 || H < 2) return;
+  const ctx = copCtx;
+  ctx.clearRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+  const half = Math.min(W, H) / 2 * 0.86;
+
+  // plate outline
+  ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.lineWidth = Math.max(1, W * 0.002);
+  ctx.strokeRect(cx - half, cy - half, half * 2, half * 2);
+  // concentric rings
+  ctx.strokeStyle = 'rgba(255,255,255,.06)';
+  [0.33, 0.66, 1].forEach(f => { ctx.beginPath(); ctx.arc(cx, cy, half * f, 0, Math.PI * 2); ctx.stroke(); });
+  // crosshair
+  ctx.beginPath();
+  ctx.moveTo(cx - half, cy); ctx.lineTo(cx + half, cy);
+  ctx.moveTo(cx, cy - half); ctx.lineTo(cx, cy + half);
+  ctx.stroke();
+  // centre marker
+  ctx.fillStyle = 'rgba(255,255,255,.18)';
+  ctx.beginPath(); ctx.arc(cx, cy, W * 0.006, 0, Math.PI * 2); ctx.fill();
+
+  // ease current position toward target
+  if (cop.active) { cop.x += (cop.tx - cop.x) * 0.25; cop.y += (cop.ty - cop.y) * 0.25; }
+  const px = cx + cop.x * half;
+  const py = cy - cop.y * half;   // y up is positive
+
+  if (copTrailOn && cop.active) {
+    copTrail.push([px, py]);
+    if (copTrail.length > COP_TRAIL_MAX) copTrail.shift();
+  }
+  for (let i = 1; i < copTrail.length; i++) {
+    const a = i / copTrail.length;
+    ctx.strokeStyle = `rgba(224,48,48,${a * 0.5})`;
+    ctx.lineWidth = Math.max(1, W * 0.004) * a;
+    ctx.beginPath(); ctx.moveTo(copTrail[i-1][0], copTrail[i-1][1]); ctx.lineTo(copTrail[i][0], copTrail[i][1]); ctx.stroke();
+  }
+
+  if (cop.active) {
+    const dotR = W * 0.018;
+    const grd = ctx.createRadialGradient(px, py, 0, px, py, dotR * 3);
+    grd.addColorStop(0, 'rgba(224,48,48,.55)'); grd.addColorStop(1, 'rgba(224,48,48,0)');
+    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(px, py, dotR * 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ff5b5b'; ctx.beginPath(); ctx.arc(px, py, dotR, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = Math.max(1, W * 0.003); ctx.stroke();
+  }
+}
 
 // ── Web Serial check ───────────────────────────────────────────────────────
 if (!('serial' in navigator)) {
